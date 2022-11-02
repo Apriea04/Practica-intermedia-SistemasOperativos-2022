@@ -5,12 +5,15 @@
 #include <unistd.h>
 #include <signal.h> //Para los números de las señales
 #include <sys/wait.h>
-
+void tec(int sig);
+void encar(int sig);
+void asis(int sig);
 int main(int argc, char *argv[])
 {
 	srand(time(NULL)); // Semilla del aleatorio
 	pid_t tecnico, encargado, *asistentes;
 	int estadoAvion, overbooking, numAsistentes, pasajeros, pasajerosAsistente;
+	struct sigaction ss;
 	tecnico = fork();
 	if (tecnico == -1)
 	{
@@ -19,11 +22,13 @@ int main(int argc, char *argv[])
 	else if (tecnico == 0)
 	{
 		// TECNICO
-		while (SIGUSR1 != pause())
-			;
-		printf("TÉCNICO:\t Comprobando estado del avión.\n");
-		sleep(rand() % 4 + 3);
-		exit(rand() % 2);
+		ss.sa_handler = tec;
+		if (-1 == sigaction(SIGUSR1, &ss, NULL))
+		{
+			perror("TECNICO: sigaction");
+		}
+		while (1)
+			pause();
 		// FIN DEL TÉCNICO
 	}
 	// COORDINADOR
@@ -35,16 +40,19 @@ int main(int argc, char *argv[])
 	else if (encargado == 0)
 	{
 		// ENCARGADO
-		while (SIGUSR1 != pause())
-			;
-		printf("ENCARGADO:\t Comprobando overbooking.\n");
-		sleep(2);
-		exit(rand() % 2);
+		ss.sa_handler = encar;
+		if (-1 == sigaction(SIGUSR1, &ss, NULL))
+		{
+			perror("ENCARGADO: sigaction");
+		}
+		while (1)
+			pause();
 		// FIN DEL ENCARGADO
 	}
 	// COORDINADOR
 
 	// Comprobación del avión:
+	sleep(1); // Tiempo de margen por seguridad
 	kill(tecnico, SIGUSR1);
 	wait(&estadoAvion);
 	estadoAvion = WEXITSTATUS(estadoAvion);
@@ -76,7 +84,9 @@ int main(int argc, char *argv[])
 
 	// CONTRATACIÓN DE ASISTENTES
 	numAsistentes = atoi(argv[1]);
-	asistentes = (pid_t *)malloc(sizeof(int) * numAsistentes);
+	printf("PATATA %d", numAsistentes);
+	asistentes = (pid_t *)malloc(sizeof(pid_t) * numAsistentes);
+	printf("PATATA");
 	for (int i = 0; i < numAsistentes; i++)
 	{
 		*(asistentes + i) = fork();
@@ -87,8 +97,14 @@ int main(int argc, char *argv[])
 		else if (*(asistentes) == 0)
 		{
 			// ASISTENTE
-			sleep(rand() % 4 + 3);
-			exit(rand() % 11 + 20);
+			ss.sa_handler = asis;
+			if (-1 == sigaction(SIGUSR2, &ss, NULL))
+			{
+				perror("ASISTENTE: sigaction");
+			}
+			while (1)
+				pause();
+
 			// Fin del asistente
 		}
 	}
@@ -109,4 +125,22 @@ int main(int argc, char *argv[])
 	}
 	printf("COORDINADOR:\t Despegamos con %d pasajeros.\n", pasajeros);
 	return (0);
+}
+void tec(int sig)
+{
+	printf("TÉCNICO:\t Comprobando estado del avión.\n");
+	sleep(rand() % 4 + 3);
+	exit(rand() % 2);
+}
+
+void encar(int sig)
+{
+	printf("ENCARGADO:\t Comprobando overbooking.\n");
+	sleep(2);
+	exit(rand() % 2);
+}
+void asis(int sig)
+{
+	sleep(rand() % 4 + 3);
+	exit(rand() % 11 + 20);
 }
