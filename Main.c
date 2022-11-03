@@ -11,7 +11,7 @@ void asis(int sig);
 int main(int argc, char *argv[])
 {
 	srand(time(NULL)); // Semilla del aleatorio
-	pid_t tecnico, encargado, *asistentes;
+	pid_t tecnico, encargado, *asistentes, tmp;
 	int estadoAvion, overbooking, numAsistentes, pasajeros, pasajerosAsistente;
 	struct sigaction ss;
 	tecnico = fork();
@@ -84,17 +84,16 @@ int main(int argc, char *argv[])
 
 	// CONTRATACIÓN DE ASISTENTES
 	numAsistentes = atoi(argv[1]);
-	printf("PATATA %d", numAsistentes);
 	asistentes = (pid_t *)malloc(sizeof(pid_t) * numAsistentes);
-	printf("PATATA");
+
 	for (int i = 0; i < numAsistentes; i++)
 	{
-		*(asistentes + i) = fork();
-		if (*(asistentes + i) == -1)
+		tmp = fork();
+		if (tmp == -1)
 		{
 			perror("Error con un asistente");
 		}
-		else if (*(asistentes) == 0)
+		else if (tmp == 0)
 		{
 			// ASISTENTE
 			ss.sa_handler = asis;
@@ -106,6 +105,10 @@ int main(int argc, char *argv[])
 				pause();
 
 			// Fin del asistente
+		}
+		else
+		{
+			*(asistentes + i) = tmp;
 		}
 	}
 
@@ -123,7 +126,7 @@ int main(int argc, char *argv[])
 		printf("COORDINADOR:\t Restamos 10 pasajeros por overbooking.\n");
 		pasajeros -= 10;
 	}
-	printf("COORDINADOR:\t Despegamos con %d pasajeros.\n", pasajeros);
+		printf("COORDINADOR:\t Despegamos con %d pasajeros.\n", pasajeros);
 	return (0);
 }
 void tec(int sig)
