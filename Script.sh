@@ -1,7 +1,6 @@
 #!/bin/bash
 
-function mostrarMenu()
-{   
+function mostrarMenu() {
     echo "Elija entre:"
     echo
     echo "1      Mostrar código"
@@ -12,25 +11,58 @@ function mostrarMenu()
     echo
 }
 
+function comprobarArgumentos() {
+    v=0
+    echo "Introduce el número de asistentes"
+        while test $v -ne 1
+        do
+            read asistentes
+            if [[ $asistentes =~ ^[0-9]+$ ]];
+            then
+                if test $asistentes -eq 0
+                then
+                    echo "Se necesita al menos un asistente"
+                else
+                    break
+                fi
+            else
+               echo "Has de introducir un entero positivo"
+            fi
+        done
+}
+
 opcion=8
 mostrarMenu
 while test $opcion -ne 4
 do
-	read opcion
+    read opcion
 
-	case $opcion in
-	
-    1)  echo `cat Main.c`;;
-    2)  echo `gcc Main.c -o a.out`
+    case $opcion in
+
+    1) echo $(cat Main.c) ;;
+    2)
+        echo $(gcc Main.c -o a.out)
         echo "Compilando..."
-	
-	esac
-    #no limpiamos pantalla si queremos ver el contenido del archivo
-    if test $opcion -ne 1
-    then
-        echo `clear`
+        sleep 1
+        echo $(clear)
+        ;;
+    3) echo `clear`
+        if test -f "Main.c"
+        then
+            comprobarArgumentos
+            echo "Asistentes: $asistentes"
+            echo `./a.out $asistentes`
+        else
+            echo "Primero se ha de compilar (opción 2)"
+        fi;;
+    4)
+        echo "Saliendo..."
+        exit 0
+        ;;
+    *) echo "Debe seleccionar una opción válida" ;;
 
-    fi
+    esac
+
     sleep 1
     mostrarMenu
 done
