@@ -8,11 +8,16 @@
 void tec(int sig);
 void encar(int sig);
 void asis(int sig);
+int busca(pid_t valor, pid_t *array, int tamanyo);
 int main(int argc, char *argv[])
 {
+	if (argc != 2)
+	{
+		return -1;
+	}
 	srand(time(NULL)); // Semilla del aleatorio
 	pid_t tecnico, encargado, *asistentes, tmp;
-	int estadoAvion, overbooking, numAsistentes, pasajeros, pasajerosAsistente;
+	int estadoAvion, overbooking, numAsistentes, pasajeros, pasajerosAsistente, asistente;
 	struct sigaction ss;
 	tecnico = fork();
 	if (tecnico == -1)
@@ -108,25 +113,38 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			*(asistentes + i) = tmp;
+			asistentes[i] = tmp;
 		}
 	}
 
 	// Asistentes contratados
+
 	sleep(2); // Esperamos 2 segundos
-	pasajeros = 0;
+	// Envío de órdenes a todos
+
 	for (int i = 0; i < numAsistentes; i++)
 	{
 		kill(asistentes[i], SIGUSR2);
-		wait(&pasajerosAsistente);
-		pasajeros += WEXITSTATUS(pasajerosAsistente);
 	}
+	pasajeros = 0;
+
+	// Recepción de pasajeros
+	tmp = wait(&pasajerosAsistente);
+	while (tmp != -1)
+	{
+		asistente = busca(tmp, asistentes, numAsistentes);
+		printf("COORDINADOR:\t El asistente %d ha embarcado a %d pasajeros\n", asistente, WEXITSTATUS(pasajerosAsistente));
+		pasajeros += WEXITSTATUS(pasajerosAsistente);
+		tmp = wait(&pasajerosAsistente);
+	}
+
+	free(asistentes);
 	if (overbooking)
 	{
 		printf("COORDINADOR:\t Restamos 10 pasajeros por overbooking.\n");
 		pasajeros -= 10;
 	}
-		printf("COORDINADOR:\t Despegamos con %d pasajeros.\n", pasajeros);
+	printf("COORDINADOR:\t Despegamos con %d pasajeros.\n", pasajeros);
 	return (0);
 }
 void tec(int sig)
@@ -146,4 +164,20 @@ void asis(int sig)
 {
 	sleep(rand() % 4 + 3);
 	exit(rand() % 11 + 20);
+}
+/*
+	Devuelve la posición de un valor en el vector. Precondición: el valor debe estar en el array.
+*/
+int busca(pid_t valor, pid_t *array, int tamanyo)
+{
+	int pos = 0;
+	while (pos < tamanyo)
+	{
+		if (array[pos] == valor)
+		{
+			return pos + 1;
+		}
+		pos++;
+	}
+	return -1;
 }
