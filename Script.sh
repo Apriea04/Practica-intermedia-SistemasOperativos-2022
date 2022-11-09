@@ -50,7 +50,7 @@ do
         if test -f "Main.c"
         then
             comprobarArgumentos
-            echo "Asistentes: $asistentes"
+            
             echo `./a.out $asistentes`
         else
             echo "Primero se ha de compilar (opción 2)"
