@@ -11,24 +11,27 @@ function mostrarMenu() {
     echo
 }
 
+function compilar() {
+    gcc Main.c -o a.out
+}
+
 function comprobarArgumentos() {
     v=0
     echo "Introduce el número de asistentes"
-        while test $v -ne 1
-        do
-            read asistentes
-            if [[ $asistentes =~ ^[0-9]+$ ]];
-            then
-                if test $asistentes -eq 0
-                then
-                    echo "Se necesita al menos un asistente"
-                else
-                    break
-                fi
+    echo
+    while test $v -ne 1; do
+        read asistentes
+        if [[ $asistentes =~ ^[0-9]+$ ]]; then
+            if test $asistentes -eq 0; then
+                echo "Se necesita al menos un asistente"
             else
-               echo "Has de introducir un entero positivo"
+                break
             fi
-        done
+        else
+            echo "Has de introducir un entero positivo"
+            sleep 1
+        fi
+    done
 }
 
 function titulo() {
@@ -43,12 +46,11 @@ ______  _  _         _      _          _____  _                    _         _
                __/ |                                                                     
               |___/                                                                      
 
-
-
+    
                                         __|__
                                         \___/
-                                        | |
-                                        | |
+                                         | |
+                                         | |
                                         _|_|______________
                                                 /|\\ 
                                               */ | \\*
@@ -83,38 +85,58 @@ function plane() {
                       //  ,/
                      //  /
                     // ,/
-                   //_/'
+                   //_/
+                   
+                   
+                   '
 }
 opcion=8
 mostrarMenu
-while test $opcion -ne 4
-do
+while test $opcion -ne 4; do
     read opcion
 
     case $opcion in
 
-    1) echo $(cat Main.c) ;;
+    1)  cat Main.c
+        echo;;
     2)
-        echo $(gcc Main.c -o a.out)
         echo "Compilando..."
+        compilar
         sleep 1
-        echo $(clear)
+        clear
         ;;
-    3) echo `clear`
-        if test -f "Main.c"
+    3)
+        echo $(clear)
+        if ! test -f "a.out"; then
+            echo "Para otra vez, recuerde compilar antes de ejecutar."
+            sleep 2
+            echo "Compilación automática"
+            compilar
+            sleep 1
+        fi
+        titulo
+        comprobarArgumentos
+        if test $asistentes -gt 25
         then
-            titulo
-            comprobarArgumentos
-            plane
-            echo `./a.out $asistentes`
+            echo "No existe un avión capaz de transportar a más de 550 personas."
+            sleep 2
+            echo "Aún así, lo intentaremos..."
+            echo
+            sleep 1
         else
-            echo "Primero se ha de compilar (opción 2)"
-        fi;;
+            plane
+            sleep 1
+        fi
+        ./a.out $asistentes
+        ;;
     4)
         echo "Saliendo..."
         exit 0
         ;;
-    *) echo "Debe seleccionar una opción válida" ;;
+    *)
+        clear
+        echo "Debe seleccionar una opción válida"
+        ;;
 
     esac
 

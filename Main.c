@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 	}
 	srand(time(NULL)); // Semilla del aleatorio
 	pid_t tecnico, encargado, *asistentes, tmp;
-	int estadoAvion, overbooking, numAsistentes, pasajeros, pasajerosAsistente, asistente;
+	int estadoAvion, overbooking, numAsistentes, pasajeros, pasajerosAsistente, asistente, asistentesRestantes;
 	struct sigaction ss;
 	tecnico = fork();
 	if (tecnico == -1)
@@ -106,6 +106,7 @@ int main(int argc, char *argv[])
 			{
 				perror("ASISTENTE: sigaction");
 			}
+			srand(getpid());
 			while (1)
 				pause();
 
@@ -129,22 +130,28 @@ int main(int argc, char *argv[])
 	pasajeros = 0;
 
 	// Recepción de pasajeros
+	asistentesRestantes = numAsistentes; // Contador de asistentes sin finalizar
 	tmp = wait(&pasajerosAsistente);
 	while (tmp != -1)
 	{
+		asistentesRestantes--;
 		asistente = busca(tmp, asistentes, numAsistentes);
-		printf("COORDINADOR:\t El asistente %d ha embarcado a %d pasajeros\n", asistente, WEXITSTATUS(pasajerosAsistente));
-		pasajeros += WEXITSTATUS(pasajerosAsistente);
+		if (asistentesRestantes == 0 && overbooking)
+		{ // Si es el último asistente y hay overbooking
+			printf("COORDINADOR:\t El asistente %d intentó embarcar a %d pasajeros, pero solo hubo asiento para %d\n", asistente, WEXITSTATUS(pasajerosAsistente), WEXITSTATUS(pasajerosAsistente) - 10);
+			pasajeros += WEXITSTATUS(pasajerosAsistente) - 10;
+		}
+		else
+		{
+			printf("COORDINADOR:\t El asistente %d ha embarcado a %d pasajeros\n", asistente, WEXITSTATUS(pasajerosAsistente));
+			pasajeros += WEXITSTATUS(pasajerosAsistente);
+		}
+
 		tmp = wait(&pasajerosAsistente);
 	}
 
 	free(asistentes);
-	if (overbooking)
-	{
-		printf("COORDINADOR:\t Restamos 10 pasajeros por overbooking.\n");
-		pasajeros -= 10;
-	}
-	printf("COORDINADOR:\t Despegamos con %d pasajeros.\n", pasajeros);
+	printf("COORDINADOR:\t El vuelo sale con %d pasajeros\n", pasajeros);
 	return (0);
 }
 void tec(int sig)
