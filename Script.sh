@@ -16,10 +16,10 @@ function compilar() {
 }
 
 function comprobarArgumentos() {
-    v=0
     echo "Introduce el número de asistentes"
     echo
-    while test $v -ne 1; do
+    while true
+    do
         read asistentes
         if [[ $asistentes =~ ^[0-9]+$ ]]; then
             if test $asistentes -eq 0; then
@@ -90,11 +90,71 @@ function plane() {
                    
                    '
 }
+
+function nave() {
+    echo "
+                   /\\
+                  /''\\
+                 /    \\
+                /      \\
+               /        \\
+              /          \\
+             '------------'
+              |__________|
+              /----/\----\\
+             /|    ||    |\\
+            //|____||____|\\\\
+           //  |   ||   |  \\\\
+          / |  |___||___|  | \\
+          | |   '._||_.'   | |
+          | |    |_||_|    | |
+          | |  .'  ||  '.  | |
+          | | /    ||    \ | |
+          | ||     ||     || |
+          | ||     ||     || |
+          | | \    ||    / | |
+          | |  '. _||_ .'  | |
+          | | _    ||    _ | |
+          | |/ \_.'||'._/ \| |
+          | |\_/ '.||.' \_/| |
+          | |     _||_     | |
+         /| |  .'  ||  '.  | |\\
+        / '.| /    ||    \ |.' \\
+       /   |||     ||     |||   \\
+      /    |||     ||     |||    \\
+     /     || \    ||    / ||     \\
+    /____/\||__'. _||_ .'__||/\____\\
+           |_.--^--||--^--._|
+          / .'/_'''||'''_\'. \\
+         / /   /___||___\   \ \\
+        / /     /__||__\     \ \\
+       / /         ||         \ \\
+      /.'          ||          '.\\
+     //            ||            \\\\
+  __//_          __||__          _\\\\__
+ '====='        '======'        '====='
+
+"
+}
+
+function cancelled() {
+    echo '
+
+   ____    _    _   _  ____ _____ _     _     _____ ____  
+  / ___|  / \  | \ | |/ ___| ____| |   | |   | ____|  _ \ 
+ | |     / _ \ |  \| | |   |  _| | |   | |   |  _| | | | |
+ | |___ / ___ \| |\  | |___| |___| |___| |___| |___| |_| |
+  \____/_/   \_\_| \_|\____|_____|_____|_____|_____|____/ 
+                                                          
+
+    '
+}
 opcion=8
 mostrarMenu
-while test $opcion -ne 4; do
+while true
+do
     read opcion
-
+    
     case $opcion in
 
     1)  cat Main.c
@@ -102,7 +162,6 @@ while test $opcion -ne 4; do
     2)
         echo "Compilando..."
         compilar
-        sleep 1
         clear
         ;;
     3)
@@ -123,11 +182,36 @@ while test $opcion -ne 4; do
             echo "Aún así, lo intentaremos..."
             echo
             sleep 1
-        else
-            plane
-            sleep 1
         fi
         ./a.out $asistentes
+        pasajeros=$?
+        sleep 1
+        if test $pasajeros -eq 1
+        then
+            echo
+            echo "No existe un avión capaz de transportar a tantos pasajeros."
+            sleep 2
+            echo "Preparando nave..."
+            echo
+            echo
+            sleep 1
+            nave
+            sleep 2
+            i=0
+            while test $i -lt 60
+            do
+                sleep 0.05
+                echo
+                i=`expr $i + 1`
+            done
+        elif test $pasajeros -eq 0
+        then
+            plane
+        else
+            cancelled
+        fi
+        
+        sleep 3
         ;;
     4)
         echo "Saliendo..."
@@ -142,4 +226,5 @@ while test $opcion -ne 4; do
 
     sleep 1
     mostrarMenu
+
 done

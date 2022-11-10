@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 		// Si el vuelo no es viable
 		printf("COORDINADOR:\t El vuelo no es viable.\n");
 		kill(encargado, SIGKILL); // Matamos al encargado
-		exit(0);
+		exit(2);
 	}
 
 	// Comprobación de las reservas
@@ -152,7 +152,14 @@ int main(int argc, char *argv[])
 
 	free(asistentes);
 	printf("COORDINADOR:\t El vuelo sale con %d pasajeros\n", pasajeros);
-	return (0);
+	if (pasajeros > 550)
+	{
+		return (1);
+	}
+	else
+	{
+		return 0;
+	}
 }
 void tec(int sig)
 {
