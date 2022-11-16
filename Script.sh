@@ -167,11 +167,8 @@ do
     3)
         echo $(clear)
         if ! test -f "programa"; then
-            echo "Para otra vez, recuerde compilar antes de ejecutar."
+            echo "Ha de compilar antes de ejecutar."
             sleep 2
-            echo "Compilación automática"
-            compilar
-            sleep 1
         fi
         titulo
         comprobarArgumentos
