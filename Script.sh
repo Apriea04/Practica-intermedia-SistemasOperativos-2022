@@ -12,7 +12,7 @@ function mostrarMenu() {
 }
 
 function compilar() {
-    gcc Main.c -o a.out
+    gcc programa.c -o programa
 }
 
 function comprobarArgumentos() {
@@ -157,7 +157,7 @@ do
     
     case $opcion in
 
-    1)  cat Main.c
+    1)  cat programa.c
         echo;;
     2)
         echo "Compilando..."
@@ -166,7 +166,7 @@ do
         ;;
     3)
         echo $(clear)
-        if ! test -f "a.out"; then
+        if ! test -f "programa"; then
             echo "Para otra vez, recuerde compilar antes de ejecutar."
             sleep 2
             echo "Compilación automática"
@@ -183,7 +183,7 @@ do
             echo
             sleep 1
         fi
-        ./a.out $asistentes
+        ./programa $asistentes
         pasajeros=$?
         sleep 1
         if test $pasajeros -eq 1
@@ -210,8 +210,7 @@ do
         else
             cancelled
         fi
-        
-        sleep 3
+        exit 0
         ;;
     4)
         echo "Saliendo..."
@@ -224,7 +223,6 @@ do
 
     esac
 
-    sleep 1
     mostrarMenu
 
 done

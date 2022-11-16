@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <signal.h> //Para los números de las señales
 #include <sys/wait.h>
+
 void tec(int sig);
 void encar(int sig);
 void asis(int sig);
