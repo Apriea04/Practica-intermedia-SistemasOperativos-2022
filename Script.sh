@@ -162,6 +162,7 @@ do
     2)
         echo "Compilando..."
         compilar
+        sleep 2
         clear
         ;;
     3)
