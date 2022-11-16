@@ -188,13 +188,13 @@ do
             then
                 echo
                 echo "No existe un avión capaz de transportar a tantos pasajeros."
-                sleep 2
+                sleep 4
                 echo "Preparando nave..."
                 echo
                 echo
                 sleep 1
                 nave
-                sleep 2
+                sleep 3
                 i=0
                 while test $i -lt 60
                 do
