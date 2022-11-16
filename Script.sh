@@ -170,45 +170,46 @@ do
         if ! test -f "programa"; then
             echo "Ha de compilar antes de ejecutar."
             sleep 2
-        fi
-        titulo
-        comprobarArgumentos
-        if test $asistentes -gt 25
-        then
-            echo "No existe un avión capaz de transportar a más de 550 personas."
-            sleep 2
-            echo "Aún así, lo intentaremos..."
-            echo
-            sleep 1
-        fi
-        ./programa $asistentes
-        pasajeros=$?
-        sleep 1
-        if test $pasajeros -eq 1
-        then
-            echo
-            echo "No existe un avión capaz de transportar a tantos pasajeros."
-            sleep 2
-            echo "Preparando nave..."
-            echo
-            echo
-            sleep 1
-            nave
-            sleep 2
-            i=0
-            while test $i -lt 60
-            do
-                sleep 0.05
-                echo
-                i=`expr $i + 1`
-            done
-        elif test $pasajeros -eq 0
-        then
-            plane
         else
-            cancelled
+            titulo
+            comprobarArgumentos
+            if test $asistentes -gt 25
+            then
+                echo "No existe un avión capaz de transportar a más de 550 personas."
+                sleep 2
+                echo "Aún así, lo intentaremos..."
+                echo
+                sleep 1
+            fi
+            ./programa $asistentes
+            pasajeros=$?
+            sleep 1
+            if test $pasajeros -eq 1
+            then
+                echo
+                echo "No existe un avión capaz de transportar a tantos pasajeros."
+                sleep 2
+                echo "Preparando nave..."
+                echo
+                echo
+                sleep 1
+                nave
+                sleep 2
+                i=0
+                while test $i -lt 60
+                do
+                    sleep 0.05
+                    echo
+                    i=`expr $i + 1`
+                done
+            elif test $pasajeros -eq 0
+            then
+                plane
+            else
+                cancelled
+            fi
+            exit 0
         fi
-        exit 0
         ;;
     4)
         echo "Saliendo..."
