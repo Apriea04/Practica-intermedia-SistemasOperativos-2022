@@ -21,12 +21,12 @@ La presente pr´actica va a constar de dos partes:
 
    - Si se selecciona la primera, opción el script muestra el código del
 programa mediante el uso del comando ``cat`` (<code>cat programa.c</code>).
-  - Si se selecciona la segunda, se lanzará la compilación del archivo .c
+   - Si se selecciona la segunda, se lanzará la compilación del archivo .c
 en que entregue el programa (``gcc programa.c -o programa``).
-  - Si se escoge la tercera, se ejecutará el programa, siempre que exista el
+   - Si se escoge la tercera, se ejecutará el programa, siempre que exista el
 ejecutable y tenga permisos de ejecución. Para proceder a dicha ejecución se pedirá el número de asistentes de vuelo que luego se pasará
 como argumentos al programa. Debe controlarse que el mínimo de asistentes sea 1.
-  - En caso de que se escoja la cuarta, se saldrá del script.
+   - En caso de que se escoja la cuarta, se saldrá del script.
 
 ### Simulador de embarque
 
